@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HELIO | Adaptive Cinema</title>
+    
+    <link rel="icon" type="image/png" href="icon.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- THEMING & VARIABLES --- */
+        :root {
+            --helio-purple: #9e86ff;
+            --helio-purple-dark: #6347d1;
+            --helio-glow: rgba(158, 134, 255, 0.35);
+            --bg-deep: #030305;
+            --bg-card: rgba(18, 18, 26, 0.6);
+            --bg-glass: rgba(10, 10, 16, 0.75);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --accent-gold: #fbbf24;
+            --radius-lg: 16px;
+            --radius-sm: 8px;
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --font-heading: 'Space Grotesk', sans-serif;
+            --font-body: 'Outfit', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { 
+            background: rgba(255, 255, 255, 0.15); 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover { background: var(--helio-purple); }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            background-image: 
+                radial-gradient(ellipse 80% 80% at 50% -20%, rgba(120, 119, 198, 0.12), transparent),
+                radial-gradient(circle at 10% 90%, rgba(158, 134, 255, 0.05), transparent 40%);
+            background-attachment: fixed;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        button, input, select { font-family: inherit; outline: none; border: none; }
+
+        /* --- NAVBAR --- */
+        .nav-header {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            padding: 1rem 5vw;
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--bg-glass);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .logo-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .logo-img-icon {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            border-radius: var(--radius-sm);
+        }
+
+        .logo-title {
+            font-family: var(--font-heading);
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: #fff;
+            background: linear-gradient(135deg, #fff 60%, var(--helio-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.4rem;
+            list-style: none;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 4px;
+            border-radius: 100px;
+            border: 1px solid var(--border-glass);
+        }
+
+        .nav-link {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            padding: 0.5rem 1.1rem;
+            border-radius: 100px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover { color: var(--text-main); }
+        .nav-link.active {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* --- SEARCH FIELD --- */
+        .search-wrapper { position: relative; }
+        .search-field {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-glass);
+            padding: 0.65rem 1.2rem 0.65rem 2.6rem; border-radius: 100px;
+            color: white; font-size: 0.85rem;
+            width: 180px; transition: var(--transition);
+        }
+        .search-field:focus { 
+            outline: none; width: 280px; 
+            border-color: var(--helio-purple);
+            background: rgba(255,255,255,0.1);
+            box-shadow: 0 0 25px var(--helio-glow);
+        }
+        .search-icon {
+            position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%);
+            width: 15px; height: 15px; fill: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .btn-profile {
+            background: rgba(158, 134, 255, 0.15);
+            border: 1px solid rgba(158, 134, 255, 0.3);
+            color: #fff;
+            padding: 0.6rem 1.2rem;
+            border-radius: 100px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-profile:hover {
+            background: var(--helio-purple);
+            box-shadow: 0 0 20px var(--helio-glow);
+        }
+
+        /* --- HERO THEATER --- */
+        .hero-container {
+            padding: 100px 5vw 0;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .hero-theater {
+            position: relative;
+            height: 540px; width: 100%;
+            border-radius: 24px;
+            background-size: cover; background-position: center 20%;
+            display: flex; align-items: flex-end; padding: 3.5rem;
+            overflow: hidden;
+            border: 1px solid var(--border-glass);
+            transition: background-image 0.8s ease-in-out;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+        }
+
+        .hero-theater::before { 
+            content: ''; position: absolute; inset: 0; 
+            background: 
+                linear-gradient(180deg, transparent 30%, var(--bg-deep) 100%),
+                linear-gradient(90deg, rgba(3, 3, 5, 0.95) 20%, rgba(3, 3, 5, 0.4) 60%, transparent 100%); 
+        }
+
+        .hero-inner { position: relative; z-index: 10; max-width: 650px; }
+
+        .time-greeting {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: rgba(158, 134, 255, 0.15);
+            border: 1px solid rgba(158, 134, 255, 0.3);
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--helio-purple);
+            margin-bottom: 1.2rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .hero-title { 
+            font-family: var(--font-heading);
+            font-size: clamp(2.2rem, 4vw, 3.8rem); font-weight: 800; line-height: 1.1; margin-bottom: 0.8rem;
+            letter-spacing: -1px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+        }
+
+        .hero-meta {
+            display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;
+            font-size: 0.9rem; color: var(--text-muted);
+        }
+
+        .meta-rating { color: var(--accent-gold); font-weight: 600; }
+
+        .hero-overview { 
+            font-size: 0.95rem; color: #cbd5e1; line-height: 1.6; margin-bottom: 1.8rem;
+            display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+            font-weight: 300;
+        }
+
+        .hero-actions { display: flex; gap: 1rem; }
+
+        .btn-play {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 0.85rem 2rem; border-radius: 100px;
+            font-size: 0.9rem; font-weight: 800; cursor: pointer;
+            background: #fff; color: #000;
+            transition: var(--transition);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-play:hover {
+            transform: translateY(-2px) scale(1.02);
+            background: var(--helio-purple); color: #fff;
+            box-shadow: 0 0 30px var(--helio-glow);
+        }
+
+        .btn-bookmark {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 0.85rem 1.8rem; border-radius: 100px;
+            font-size: 0.9rem; font-weight: 600; cursor: pointer;
+            background: rgba(255, 255, 255, 0.08); color: #fff;
+            backdrop-filter: blur(12px); border: 1px solid var(--border-glass);
+            transition: var(--transition);
+        }
+
+        .btn-bookmark:hover {
+            background: rgba(255, 255, 255, 0.16);
+            transform: translateY(-2px);
+        }
+
+        /* --- CONTENT HUB & HORIZONTAL SCROLL ROWS --- */
+        .content-hub { padding: 2rem 5vw 6rem; max-width: 1600px; margin: 0 auto; }
+
+        .row-heading { 
+            font-family: var(--font-heading);
+            font-size: 1.3rem; font-weight: 700; margin: 2.5rem 0 1rem; 
+            letter-spacing: -0.3px; color: var(--text-main);
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .row-heading::before {
+            content: ''; width: 4px; height: 20px;
+            background: var(--helio-purple); border-radius: 2px;
+        }
+
+        .horizontal-row {
+            display: flex;
+            gap: 18px;
+            overflow-x: auto;
+            padding: 10px 0 20px;
+            scroll-behavior: smooth;
+        }
+
+        .horizontal-row::-webkit-scrollbar { height: 6px; }
+
+        .movie-card {
+            flex: 0 0 190px;
+            aspect-ratio: 2/3; border-radius: var(--radius-lg); overflow: hidden;
+            cursor: pointer; transition: var(--transition);
+            background: var(--bg-card);
+            position: relative;
+            border: 1px solid var(--border-glass);
+        }
+
+        .movie-card:hover { 
+            transform: translateY(-8px) scale(1.03); 
+            z-index: 10; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 25px var(--helio-glow);
+            border-color: var(--helio-purple);
+        }
+
+        .movie-card img { width: 100%; height: 100%; object-fit: cover; transition: var(--transition); }
+        .movie-card:hover img { transform: scale(1.06); }
+
+        .card-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(180deg, transparent 40%, rgba(3, 3, 5, 0.95) 100%);
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding: 1rem; opacity: 0.9;
+        }
+
+        .card-title {
+            font-family: var(--font-heading); font-size: 0.9rem; font-weight: 600;
+            line-height: 1.2; margin-bottom: 4px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+
+        .card-info {
+            display: flex; align-items: center; justify-content: space-between;
+            font-size: 0.75rem; color: var(--text-muted);
+        }
+
+        /* --- SCHEME / SHOWCASE PAGE STYLES --- */
+        .showcase-container {
+            padding: 120px 5vw 5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .showcase-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .showcase-badge {
+            display: inline-block;
+            padding: 6px 18px;
+            border-radius: 100px;
+            background: rgba(158, 134, 255, 0.15);
+            border: 1px solid rgba(158, 134, 255, 0.3);
+            color: var(--helio-purple);
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .showcase-title {
+            font-family: var(--font-heading);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .showcase-subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 650px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .showcase-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2.5rem;
+            margin-top: 2rem;
+        }
+
+        .showcase-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: var(--transition);
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+
+        .showcase-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--helio-purple);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 35px var(--helio-glow);
+        }
+
+        .showcase-img-box {
+            width: 100%;
+            height: 380px;
+            position: relative;
+            overflow: hidden;
+            background: #0d0d14;
+        }
+
+        .showcase-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .showcase-card:hover .showcase-img-box img {
+            transform: scale(1.05);
+        }
+
+        .showcase-content {
+            padding: 2rem;
+        }
+
+        .showcase-card-title {
+            font-family: var(--font-heading);
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #fff;
+        }
+
+        .showcase-card-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* --- DMCA PAGE STYLES --- */
+        .policy-container {
+            padding: 120px 5vw 5rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .policy-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            padding: 3.5rem;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        }
+
+        .policy-title {
+            font-family: var(--font-heading);
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            color: #fff;
+            border-bottom: 1px solid var(--border-glass);
+            padding-bottom: 1rem;
+        }
+
+        .policy-text {
+            color: #cbd5e1;
+            font-size: 1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+        }
+
+        .policy-subheading {
+            font-family: var(--font-heading);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--helio-purple);
+            margin: 2rem 0 0.8rem;
+        }
+
+        .policy-list {
+            padding-left: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* --- USER MANAGEMENT MODAL --- */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85);
+            z-index: 10005; backdrop-filter: blur(15px);
+            display: none; align-items: center; justify-content: center;
+        }
+
+        .modal-card {
+            background: rgba(18, 18, 26, 0.95);
+            border: 1px solid var(--border-glass);
+            width: min(90%, 500px);
+            padding: 2.5rem; border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+        }
+
+        .modal-title { font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 1rem; }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; }
+        .form-input {
+            width: 100%; background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-glass);
+            padding: 0.8rem 1rem; border-radius: var(--radius-sm); color: #fff;
+        }
+        .json-box {
+            width: 100%; height: 120px; background: rgba(0,0,0,0.5);
+            border: 1px solid var(--border-glass); color: var(--helio-purple);
+            font-family: monospace; font-size: 0.75rem; padding: 10px;
+            border-radius: var(--radius-sm); resize: none; margin-bottom: 1rem;
+        }
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+        /* --- STREAM PLAYER MODAL --- */
+        #master-player {
+            position: fixed; inset: 0; background: #000; z-index: 9999;
+            display: none; width: 100vw; height: 100vh;
+            flex-direction: column;
+        }
+
+        .player-header {
+            position: absolute; top: 0; left: 0; width: 100%;
+            padding: 20px 30px; z-index: 10001;
+            display: flex; align-items: center; justify-content: space-between;
+            background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%);
+        }
+
+        .tv-controls { display: flex; gap: 10px; align-items: center; }
+
+        .select-custom {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-glass);
+            color: #fff; padding: 8px 16px; border-radius: 100px;
+            cursor: pointer; font-size: 0.85rem; backdrop-filter: blur(10px);
+        }
+
+        .select-custom option { background: #121218; color: #fff; }
+
+        .exit-btn {
+            background: rgba(255, 255, 255, 0.15); color: #fff;
+            border: 1px solid var(--border-glass);
+            padding: 8px 24px; border-radius: 100px; cursor: pointer; 
+            font-weight: 700; font-size: 0.85rem; transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+
+        .exit-btn:hover { background: #fff; color: #000; transform: scale(1.05); }
+
+        #stream-mount { width: 100%; height: 100%; border: none; }
+
+        @media (max-width: 900px) {
+            .showcase-grid { grid-template-columns: 1fr; }
+            .showcase-img-box { height: 260px; }
+            .nav-links { display: none; }
+            .movie-card { flex: 0 0 140px; }
+            .hero-theater { height: 440px; padding: 2rem; }
+            .hero-title { font-size: 2rem; }
+            .search-field { width: 140px; }
+            .search-field:focus { width: 200px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="nav-header">
+    <div class="logo-box" onclick="switchMainView('browse')">
+        <img src="icon.png" alt="HELIO Icon" class="logo-img-icon" onerror="this.style.display='none'">
+        <div class="logo-title">HELIO</div>
+    </div>
+
+    <ul class="nav-links">
+        <li class="nav-link active" id="nav-browse" onclick="switchMainView('browse', this)">Browse</li>
+        <li class="nav-link" id="nav-watchlist" onclick="switchMainView('watchlist', this)">Watchlist</li>
+        <li class="nav-link" id="nav-history" onclick="switchMainView('history', this)">History</li>
+        <li class="nav-link" id="nav-scheme" onclick="switchMainView('scheme', this)">Scheme / Showcase</li>
+        <li class="nav-link" id="nav-dmca" onclick="switchMainView('dmca', this)">DMCA & Policy</li>
+    </ul>
+
+    <div class="nav-actions">
+        <div class="search-wrapper">
+            <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+            <input type="text" id="omni-search" class="search-field" placeholder="Search title..." onkeyup="executeSearch(event)">
+        </div>
+        <button class="btn-profile" onclick="openProfileModal()">👤 Account JSON</button>
+    </div>
+</nav>
+
+<div id="view-browse">
+    <div class="hero-container" id="heroWrapper">
+        <header id="hero-unit" class="hero-theater">
+            <div class="hero-inner">
+                <div class="time-greeting" id="timeGreeting">✦ Welcome to HELIO</div>
+                <h1 id="hero-title" class="hero-title">INITIATING...</h1>
+                <div class="hero-meta">
+                    <span class="meta-rating" id="heroRating">★ 0.0</span>
+                    <span id="heroDate">2026</span>
+                    <span id="heroType" style="text-transform: uppercase; font-weight: 700;">Movie</span>
+                </div>
+                <p id="hero-overview" class="hero-overview">Fetching overview details...</p>
+                <div class="hero-actions">
+                    <button class="btn-play" id="heroWatchBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                        WATCH NOW
+                    </button>
+                    <button class="btn-bookmark" id="heroBookmarkBtn" onclick="toggleWatchlistCurrent()">
+                        + Watchlist
+                    </button>
+                </div>
+            </div>
+        </header>
+    </div>
+
+    <main class="content-hub" id="catalog-display">
+        </main>
+</div>
+
+<div id="view-scheme" style="display: none;">
+    <div class="showcase-container">
+        <div class="showcase-header">
+            <span class="showcase-badge">✦ Interactive Cinema Architecture</span>
+            <h1 class="showcase-title">System Showcase & Design Scheme</h1>
+            <p class="showcase-subtitle">Experience our glassmorphic streaming interface built with modern dynamic playback feeds and seamless user state persistence.</p>
+        </div>
+
+        <div class="showcase-grid">
+            <div class="showcase-card">
+                <div class="showcase-img-box">
+                    <img src="screenshot_1.png" alt="HELIO Interface Screenshot 1" onerror="this.src='https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?q=80&w=1200&auto=format&fit=crop'">
+                </div>
+                <div class="showcase-content">
+                    <h2 class="showcase-card-title">01. Dynamic Hero Theater & Categorized Rows</h2>
+                    <p class="showcase-card-desc">Features real-time backdrop rendering, ambient dynamic greetings based on user local time, and fluid high-FPS scroll rows.</p>
+                </div>
+            </div>
+
+            <div class="showcase-card">
+                <div class="showcase-img-box">
+                    <img src="screenshot_2.png" alt="HELIO Interface Screenshot 2" onerror="this.src='https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?q=80&w=1200&auto=format&fit=crop'">
+                </div>
+                <div class="showcase-content">
+                    <h2 class="showcase-card-title">02. Persistent JSON State & Watchtime Engine</h2>
+                    <p class="showcase-card-desc">Tracks exact episode progression, custom user profiles, and seamless JSON import/export routines for total cross-device freedom.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="view-dmca" style="display: none;">
+    <div class="policy-container">
+        <div class="policy-card">
+            <h1 class="policy-title">DMCA & Content Policy Notice</h1>
+            
+            <p class="policy-text">
+                HELIO respects the intellectual property rights of others and expects its users to do the same. In accordance with the Digital Millennium Copyright Act of 1998 ("DMCA"), HELIO will respond expeditiously to notices of alleged copyright infringement that are duly reported to our designated copyright contact.
+            </p>
+
+            <h2 class="policy-subheading">1. Non-Hosting / Indexing Disclaimer</h2>
+            <p class="policy-text">
+                HELIO operates strictly as an automated media metadata aggregator and search interface utilizing public API services (e.g., The Movie Database API). HELIO does not host, stream, store, upload, or manage video files, media servers, or copyright-protected multimedia content on its infrastructure. All content linked or embedded through the site is hosted on third-party external services.
+            </p>
+
+            <h2 class="policy-subheading">2. DMCA Takedown Request Requirements</h2>
+            <p class="policy-text">
+                If you are a copyright owner or authorized agent thereof, and believe that content accessible via HELIO infringes upon your copyright, please submit a notice containing the following information:
+            </p>
+            <ul class="policy-list">
+                <li>A physical or electronic signature of the person authorized to act on behalf of the copyright owner.</li>
+                <li>Identification of the copyrighted work claimed to have been infringed.</li>
+                <li>Identification of the material that is claimed to be infringing and direct URL links pointing to the content.</li>
+                <li>Your contact information, including physical address, telephone number, and email address.</li>
+                <li>A statement that you have a good faith belief that the use of the material is not authorized by the copyright owner.</li>
+            </ul>
+
+            <h2 class="policy-subheading">3. Contact for DMCA Inquiries</h2>
+            <p class="policy-text">
+                All copyright notices should be sent via email to: <strong style="color: var(--helio-purple);">dmca@helio-cinema.app</strong>. Please allow 2-3 business days for electronic response processing.
+            </p>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal-overlay" id="profileModal">
+    <div class="modal-card">
+        <h3 class="modal-title">Account & Watchtime Data (JSON)</h3>
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="accUsername" class="form-input" placeholder="User Name">
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="accPassword" class="form-input" placeholder="Password">
+        </div>
+        <div class="form-group">
+            <label>Export/Import Account Data (JSON Format)</label>
+            <textarea id="jsonBox" class="json-box"></textarea>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-bookmark" onclick="exportUserData()">Export JSON</button>
+            <button class="btn-bookmark" onclick="importUserData()">Import JSON</button>
+            <button class="btn-play" onclick="saveProfileAccount()">Save Profile</button>
+            <button class="btn-bookmark" onclick="closeProfileModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<div id="master-player">
+    <div class="player-header">
+        <div class="tv-controls" id="tvControls" style="display: none;">
+            <select id="seasonSelect" class="select-custom" onchange="updateTvEpisode()"></select>
+            <select id="episodeSelect" class="select-custom" onchange="updateTvEpisode()"></select>
+        </div>
+        <div></div> <button class="exit-btn" onclick="closeTheater()">✕ RETURN TO HELIO</button>
+    </div>
+    <iframe id="stream-mount" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+</div>
+
+<script>
+    const API_KEY = 'ebbc810d0c9a9a4a13a264f96897036e';
+    const TMDB_BASE = 'https://api.themoviedb.org/3';
+    const VIDCORE_BASE = 'https://vidcore.io';
+
+    let currentFeaturedItem = null;
+    let activeMediaId = null;
+    let activeMediaType = 'movie';
+    let searchTimeout = null;
+
+    /* USER ACCOUNT & WATCHTIME SAVES (LOCALSTORAGE + JSON ENGINE) */
+    let userData = {
+        username: 'Guest',
+        password: '',
+        watchlist: [],
+        watchtimeHistory: {}
+    };
+
+    function loadLocalUserData() {
+        const local = localStorage.getItem('helio_user_data');
+        if (local) {
+            try { userData = JSON.parse(local); } catch (e) {}
+        }
+    }
+
+    function saveLocalUserData() {
+        localStorage.setItem('helio_user_data', JSON.stringify(userData));
+    }
+
+    /* DYNAMIC TIME-BASED GREETING */
+    function initDynamicGreeting() {
+        const hour = new Date().getHours();
+        let greetings = [];
+
+        if (hour >= 5 && hour < 12) {
+            greetings = [
+                "What's on the radar this fine morning?",
+                "Movies and breakfast?",
+                "Early bird gets the best cinema.",
+                "Start your day with a blockbuster."
+            ];
+        } else if (hour >= 12 && hour < 18) {
+            greetings = [
+                "Good afternoon! Time for a stream break?",
+                "Mid-day cinema picks ready for you.",
+                "Afternoon feature presentation loaded."
+            ];
+        } else {
+            greetings = [
+                "Late night cinema mode activated.",
+                "Unwind with something great tonight.",
+                "Popcorn time! What are we watching?",
+                "Night owl movie marathon starts now."
+            ];
+        }
+
+        const randomGreeting = greetings[Math.floor(Math.random() * greetings.length)];
+        document.getElementById('timeGreeting').innerText = `✦ ${randomGreeting}`;
+    }
+
+    /* INITIALIZATION */
+    async function ignite() {
+        loadLocalUserData();
+        initDynamicGreeting();
+        loadCategories();
+    }
+
+    async function loadCategories() {
+        const categories = [
+            { title: "Trending", url: `${TMDB_BASE}/trending/all/week?api_key=${API_KEY}` },
+            { title: "Newly Added", url: `${TMDB_BASE}/movie/now_playing?api_key=${API_KEY}` },
+            { title: "Action", url: `${TMDB_BASE}/discover/movie?api_key=${API_KEY}&with_genres=28&sort_by=popularity.desc` },
+            { title: "Comedy", url: `${TMDB_BASE}/discover/movie?api_key=${API_KEY}&with_genres=35&sort_by=popularity.desc` },
+            { title: "Drama", url: `${TMDB_BASE}/discover/movie?api_key=${API_KEY}&with_genres=18&sort_by=popularity.desc` },
+            { title: "Horror", url: `${TMDB_BASE}/discover/movie?api_key=${API_KEY}&with_genres=27&sort_by=popularity.desc` },
+            { title: "Sci-Fi", url: `${TMDB_BASE}/discover/movie?api_key=${API_KEY}&with_genres=878&sort_by=popularity.desc` }
+        ];
+
+        const catalogDisplay = document.getElementById('catalog-display');
+        catalogDisplay.innerHTML = '';
+
+        let heroSet = false;
+
+        for (const cat of categories) {
+            try {
+                const res = await fetch(cat.url);
+                const data = await res.json();
+                
+                if (data.results && data.results.length > 0) {
+                    if (!heroSet) {
+                        refreshHero(data.results[0]);
+                        heroSet = true;
+                    }
+                    renderCategoryRow(cat.title, data.results);
+                }
+            } catch (err) {
+                console.error(`Error loading category [${cat.title}]:`, err);
+            }
+        }
+    }
+
+    /* RENDER HERO SPOTLIGHT */
+    function refreshHero(item) {
+        currentFeaturedItem = item;
+        const hero = document.getElementById('hero-unit');
+        const backdropPath = item.backdrop_path ? `https://image.tmdb.org/t/p/original${item.backdrop_path}` : '';
+        
+        hero.style.backgroundImage = `url('${backdropPath}')`;
+        document.getElementById('hero-title').innerText = item.title || item.name;
+        document.getElementById('heroRating').innerText = `★ ${(item.vote_average || 0).toFixed(1)}`;
+        document.getElementById('heroDate').innerText = (item.release_date || item.first_air_date || '').substring(0, 4);
+        
+        const mediaType = item.media_type || (item.title ? 'movie' : 'tv');
+        document.getElementById('heroType').innerText = mediaType;
+        document.getElementById('hero-overview').innerText = item.overview || 'No synopsis available.';
+
+        document.getElementById('heroWatchBtn').onclick = () => launchTheater(mediaType, item.id);
+
+        updateBookmarkBtnStatus();
+    }
+
+    /* RENDER HORIZONTAL SCROLLABLE ROW */
+    function renderCategoryRow(title, items) {
+        const catalogDisplay = document.getElementById('catalog-display');
+
+        const heading = document.createElement('h2');
+        heading.className = 'row-heading';
+        heading.innerText = title;
+
+        const row = document.createElement('div');
+        row.className = 'horizontal-row';
+
+        items.forEach(item => {
+            if (!item.poster_path) return;
+
+            const mediaType = item.media_type || (item.title ? 'movie' : 'tv');
+            const card = document.createElement('div');
+            card.className = 'movie-card';
+            card.innerHTML = `
+                <img src="https://image.tmdb.org/t/p/w500${item.poster_path}" alt="${item.title || item.name}" loading="lazy">
+                <div class="card-overlay">
+                    <div class="card-title">${item.title || item.name}</div>
+                    <div class="card-info">
+                        <span>★ ${(item.vote_average || 0).toFixed(1)}</span>
+                        <span style="text-transform: uppercase;">${mediaType}</span>
+                    </div>
+                </div>
+            `;
+            card.onclick = () => {
+                refreshHero(item);
+                launchTheater(mediaType, item.id);
+            };
+            row.appendChild(card);
+        });
+
+        catalogDisplay.appendChild(heading);
+        catalogDisplay.appendChild(row);
+    }
+
+    /* VIEW SWITCHER INCLUDING DMCA AND SCHEME */
+    function switchMainView(view, el) {
+        // Highlight Active Nav Link
+        document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+        if (el) {
+            el.classList.add('active');
+        } else {
+            const matchNav = document.getElementById(`nav-${view}`);
+            if (matchNav) matchNav.classList.add('active');
+        }
+
+        const browseView = document.getElementById('view-browse');
+        const schemeView = document.getElementById('view-scheme');
+        const dmcaView = document.getElementById('view-dmca');
+        const heroWrapper = document.getElementById('heroWrapper');
+        const catalogDisplay = document.getElementById('catalog-display');
+
+        // Hide all major view blocks first
+        browseView.style.display = 'none';
+        schemeView.style.display = 'none';
+        dmcaView.style.display = 'none';
+
+        if (view === 'browse') {
+            browseView.style.display = 'block';
+            heroWrapper.style.display = 'block';
+            loadCategories();
+        } else if (view === 'watchlist') {
+            browseView.style.display = 'block';
+            heroWrapper.style.display = 'none';
+            catalogDisplay.innerHTML = '';
+            renderCategoryRow("My Watchlist", userData.watchlist);
+        } else if (view === 'history') {
+            browseView.style.display = 'block';
+            heroWrapper.style.display = 'none';
+            catalogDisplay.innerHTML = '';
+            const historyList = Object.values(userData.watchtimeHistory);
+            renderCategoryRow("Watch History & Progress", historyList);
+        } else if (view === 'scheme') {
+            schemeView.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else if (view === 'dmca') {
+            dmcaView.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+
+    /* WATCHLIST ENGINE */
+    function toggleWatchlistCurrent() {
+        if (!currentFeaturedItem) return;
+        const exists = userData.watchlist.some(item => item.id === currentFeaturedItem.id);
+
+        if (exists) {
+            userData.watchlist = userData.watchlist.filter(item => item.id !== currentFeaturedItem.id);
+        } else {
+            userData.watchlist.push(currentFeaturedItem);
+        }
+        saveLocalUserData();
+        updateBookmarkBtnStatus();
+    }
+
+    function updateBookmarkBtnStatus() {
+        if (!currentFeaturedItem) return;
+        const btn = document.getElementById('heroBookmarkBtn');
+        const exists = userData.watchlist.some(item => item.id === currentFeaturedItem.id);
+        btn.innerText = exists ? '✓ In Watchlist' : '+ Watchlist';
+    }
+
+    /* SEARCH ENGINE */
+    function executeSearch(e) {
+        clearTimeout(searchTimeout);
+        const query = e.target.value.trim();
+
+        if (e.key === 'Enter' && !isNaN(query) && query !== '') {
+            launchTheater('movie', query);
+            return;
+        }
+
+        if (!query) {
+            switchMainView('browse');
+            return;
+        }
+
+        searchTimeout = setTimeout(async () => {
+            try {
+                const res = await fetch(`${TMDB_BASE}/search/multi?query=${encodeURIComponent(query)}&api_key=${API_KEY}`);
+                const data = await res.json();
+                
+                if (data.results && data.results.length > 0) {
+                    switchMainView('browse');
+                    const catalogDisplay = document.getElementById('catalog-display');
+                    catalogDisplay.innerHTML = '';
+                    refreshHero(data.results[0]);
+                    renderCategoryRow(`Search Results for "${query}"`, data.results);
+                }
+            } catch (err) {
+                console.error("Search Error:", err);
+            }
+        }, 350);
+    }
+
+    /* VIDCORE STREAM PLAYER & PROGRESS SAVER */
+    async function launchTheater(type, id, season = 1, episode = 1) {
+        activeMediaType = type;
+        activeMediaId = id;
+
+        const theater = document.getElementById('master-player');
+        const mount = document.getElementById('stream-mount');
+        const tvControls = document.getElementById('tvControls');
+
+        let embedUrl = '';
+
+        if (type === 'tv') {
+            tvControls.style.display = 'flex';
+            await setupTvControls(id, season, episode);
+            embedUrl = `${VIDCORE_BASE}/tv/${id}/${season}/${episode}`;
+        } else {
+            tvControls.style.display = 'none';
+            embedUrl = `${VIDCORE_BASE}/movie/${id}?autoPlay=true`;
+        }
+
+        mount.src = embedUrl;
+        theater.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+
+        // Record Progress into JSON
+        if (currentFeaturedItem) {
+            userData.watchtimeHistory[id] = {
+                ...currentFeaturedItem,
+                media_type: type,
+                lastSeason: season,
+                lastEpisode: episode,
+                timestamp: new Date().toISOString()
+            };
+            saveLocalUserData();
+        }
+    }
+
+    function closeTheater() {
+        const theater = document.getElementById('master-player');
+        const mount = document.getElementById('stream-mount');
+        mount.src = '';
+        theater.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    /* TV CONTROLS SETUP */
+    async function setupTvControls(id, currentSeason, currentEpisode) {
+        const seasonSelect = document.getElementById('seasonSelect');
+        try {
+            const res = await fetch(`${TMDB_BASE}/tv/${id}?api_key=${API_KEY}`);
+            const data = await res.json();
+
+            seasonSelect.innerHTML = '';
+            (data.seasons || []).forEach(s => {
+                if (s.season_number > 0) {
+                    const opt = document.createElement('option');
+                    opt.value = s.season_number;
+                    opt.innerText = `Season ${s.season_number}`;
+                    if (s.season_number === Number(currentSeason)) opt.selected = true;
+                    seasonSelect.appendChild(opt);
+                }
+            });
+
+            updateEpisodesList(id, seasonSelect.value || 1, currentEpisode);
+        } catch (err) {
+            console.error("Error setting up TV controls:", err);
+        }
+    }
+
+    async function updateEpisodesList(id, seasonNum, selectedEpisode = 1) {
+        const episodeSelect = document.getElementById('episodeSelect');
+        try {
+            const res = await fetch(`${TMDB_BASE}/tv/${id}/season/${seasonNum}?api_key=${API_KEY}`);
+            const data = await res.json();
+
+            episodeSelect.innerHTML = '';
+            (data.episodes || []).forEach(e => {
+                const opt = document.createElement('option');
+                opt.value = e.episode_number;
+                opt.innerText = `E${e.episode_number}: ${e.name}`;
+                if (e.episode_number === Number(selectedEpisode)) opt.selected = true;
+                episodeSelect.appendChild(opt);
+            });
+        } catch (err) {
+            console.error("Error fetching episodes:", err);
+        }
+    }
+
+    function updateTvEpisode() {
+        const season = document.getElementById('seasonSelect').value;
+        const episode = document.getElementById('episodeSelect').value;
+        launchTheater('tv', activeMediaId, season, episode);
+    }
+
+    /* ACCOUNT & JSON MANAGEMENT */
+    function openProfileModal() {
+        document.getElementById('accUsername').value = userData.username || '';
+        document.getElementById('accPassword').value = userData.password || '';
+        document.getElementById('jsonBox').value = JSON.stringify(userData, null, 2);
+        document.getElementById('profileModal').style.display = 'flex';
+    }
+
+    function closeProfileModal() {
+        document.getElementById('profileModal').style.display = 'none';
+    }
+
+    function saveProfileAccount() {
+        userData.username = document.getElementById('accUsername').value;
+        userData.password = document.getElementById('accPassword').value;
+        saveLocalUserData();
+        alert('Profile saved!');
+        closeProfileModal();
+    }
+
+    function exportUserData() {
+        document.getElementById('jsonBox').value = JSON.stringify(userData, null, 2);
+    }
+
+    function importUserData() {
+        try {
+            const jsonText = document.getElementById('jsonBox').value;
+            userData = JSON.parse(jsonText);
+            saveLocalUserData();
+            alert('User JSON successfully imported!');
+            closeProfileModal();
+            location.reload();
+        } catch (e) {
+            alert('Invalid JSON structure.');
+        }
+    }
+
+    // IGNITE APPLICATION
+    ignite();
+</script>
+</body>
+</html>
